@@ -58,6 +58,7 @@ ansible-playbook ansible/playbook.yml --syntax-check --ask-vault-pass
 
 ### 2. Diagrama de Arquitetura Final
 
+```mermaid
 flowchart TB
 
     %% ======================
