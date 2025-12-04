@@ -50,8 +50,41 @@ The following modules were used and corrected to ensure syntax validity in the t
 To confirm the code is syntactically correct and the modules are being resolved:
 
 ```bash
-# 1. Install Dependencies
-ansible-galaxy collection install -r ansible/requirements.yml
 
-# 2. Execute Syntax Check (Requires Vault password)
+# 1. Execute Syntax Check (Requires Vault password)
 ansible-playbook ansible/playbook.yml --syntax-check --ask-vault-pass
+
+
+
+### 2. Diagrama de Arquitetura Final
+
+Este diagrama reflete a topologia de serviços de produção que a Role Ansible provisiona na AWS.
+
+```mermaid
+graph TD
+    subgraph 0. Acesso Global (Edge)
+        CF[CloudFront (CDN Global)]
+    end
+
+    subgraph 1. Orquestração e Gateway
+        EKS{EKS Cluster / K8s}
+        Ingress(Ingress Controller)
+    end
+
+    subgraph 2. Aplicação e Backend
+        APP(Main-App / Web Pods)
+        RDS[(RDS PostgreSQL)]
+        CACHE[(ElastiCache Redis)]
+        SQS[SQS Queue]
+    end
+
+    User(Usuário Final) -->|1. Requisição| CF
+    CF -->|2. Roteamento de Tráfego| EKS
+    EKS -->|3. Serviço K8s| APP
+    APP -->|4A. Gravação| RDS
+    APP -->|4B. Leitura Rápida| CACHE
+    APP -->|5. Tarefas Assíncronas| SQS
+
+    style RDS fill:#F9D7D7,stroke:#A33
+    style CACHE fill:#BCE8F0,stroke:#3C763D
+    style EKS fill:#C1F9C8,stroke:#3C763D
