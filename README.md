@@ -58,33 +58,70 @@ ansible-playbook ansible/playbook.yml --syntax-check --ask-vault-pass
 
 ### 2. Diagrama de Arquitetura Final
 
-Este diagrama reflete a topologia de serviços de produção que a Role Ansible provisiona na AWS.
+flowchart TB
 
-```mermaid
-graph TD
-    subgraph 0. Acesso Global (Edge)
-        CF[CloudFront (CDN Global)]
+    %% ======================
+    %% LOCAL KUBERNETES LAYER
+    %% ======================
+
+    subgraph LOCAL["Local Kubernetes Cluster (Minikube)"]
+        
+        subgraph IngressLayer["Ingress Layer"]
+            ING[NGINX Ingress Controller]
+        end
+
+        subgraph AppLayer["Application Layer"]
+            APP[Main-App Deployment\n2 Replicas\nLiveness/Readiness Probes]
+        end
+
+        subgraph DataLayer["Data Layer"]
+            DB[(PostgreSQL\nStatefulSet + PVC)]
+            REDIS[(Redis Cache Deployment\nPassword via Secret)]
+        end
+
+        ING -->|Host: challenge.local| APP
+        APP -->|5432/TCP| DB
+        APP -->|6379/TCP| REDIS
     end
 
-    subgraph 1. Orquestração e Gateway
-        EKS{EKS Cluster / K8s}
-        Ingress(Ingress Controller)
+
+    %% ======================
+    %% AWS LAYER (Ansible)
+    %% ======================
+    
+    subgraph AWS["AWS Infrastructure (Provisioned via Ansible)"]
+    
+        subgraph ECRGroup["Container Registry"]
+            ECR[ECR Repository]
+        end
+
+        subgraph EKSGroup["Kubernetes Control Plane"]
+            EKS[EKS Cluster\n(Managed Nodegroup)]
+        end
+
+        subgraph DataAWS["Managed Data Services"]
+            RDS[(RDS PostgreSQL\nMulti-AZ)]
+            ECSHC[(ElastiCache Redis Cluster)]
+        end
+
+        subgraph Messaging["Queueing"]
+            SQS[SQS Queue]
+        end
+
+        subgraph CDN["Content Delivery"]
+            CF[CloudFront Distribution]
+        end
+
+        %% Relations inside AWS
+        EKS --> RDS
+        EKS --> ECSHC
+        EKS --> SQS
+        CF --> EKS
     end
 
-    subgraph 2. Aplicação e Backend
-        APP(Main-App / Web Pods)
-        RDS[(RDS PostgreSQL)]
-        CACHE[(ElastiCache Redis)]
-        SQS[SQS Queue]
-    end
 
-    User(Usuário Final) -->|1. Requisição| CF
-    CF -->|2. Roteamento de Tráfego| EKS
-    EKS -->|3. Serviço K8s| APP
-    APP -->|4A. Gravação| RDS
-    APP -->|4B. Leitura Rápida| CACHE
-    APP -->|5. Tarefas Assíncronas| SQS
-
-    style RDS fill:#F9D7D7,stroke:#A33
-    style CACHE fill:#BCE8F0,stroke:#3C763D
-    style EKS fill:#C1F9C8,stroke:#3C763D
+    %% ======================
+    %% CONNECTIONS BETWEEN LOCAL AND AWS (Conceptual)
+    %% ======================
+    
+    LOCAL -. Deployment Image Pull .-> ECR
