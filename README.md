@@ -49,5 +49,7 @@ The following modules were used and corrected to ensure syntax validity in the t
 #### **Verification (Syntax Check):**
 To confirm the code is syntactically correct and the modules are being resolved:
 
+```bash
+
 # 1. Execute Syntax Check (Requires Vault password)
 ansible-playbook ansible/playbook.yml --syntax-check --ask-vault-pass
