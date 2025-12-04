@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: "André"
+  description: "Role to provide CloudOps architecture (ECR, EKS, RDS, Redis, SQS, CloudFront)"
+  company: "CloudOps Challenge"
+  license: "MIT"
+  min_ansible_version: "2.9"
+  
+  platforms:
+  - name: Amazon
+    versions:
+    - all
+  galaxy_tags:
+    - aws
+    - kubernetes
+    - cloud
+    - infrastructure
+
+dependencies: [] 

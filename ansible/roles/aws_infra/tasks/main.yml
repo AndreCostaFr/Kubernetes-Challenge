@@ -1,0 +1,72 @@
+---
+- name: Load encrypted secrets
+  include_vars:
+    file: secrets.yml
+
+- name: Create ECR Repository
+  community.aws.ecs_ecr: 
+    name: "{{ ecr_repo_name }}"
+    region: "{{ region }}"
+    state: present
+    tags: "{{ tags }}"
+
+- name: Create EKS Cluster
+  community.aws.eks_cluster:
+    name: "{{ eks_cluster_name }}"
+    version: "{{ eks_version }}"
+    region: "{{ region }}"
+    role_arn: "arn:aws:iam::123456789012:role/EKS-Role-Placeholder"
+    resources_vpc_config:
+      subnetIds:
+        - "subnet-0a1b2c3d"
+        - "subnet-0a1b2c3e"
+    state: present
+    tags: "{{ tags }}"
+
+- name: Create RDS Database Instance
+  amazon.aws.rds_instance:
+    id: "{{ db_identifier }}"
+    db_name: "{{ db_name }}"
+    engine: postgres
+    engine_version: "14"
+    instance_type: "{{ db_instance_class }}"
+    username: "{{ db_user }}"
+    password: "{{ db_password }}" 
+    allocated_storage: "{{ db_storage }}"
+    publicly_accessible: no
+    wait: no
+    tags: "{{ tags }}"
+
+- name: Create ElastiCache Cluster
+  community.aws.elasticache:
+    id: "{{ cache_id }}"
+    cache_node_type: "{{ cache_node_type }}"
+    engine: redis
+    engine_version: "{{ cache_engine_version }}"
+    num_cache_nodes: 1
+    state: present
+    tags: "{{ tags }}"
+
+- name: Create SQS Queue
+  community.aws.sqs_queue:
+    name: "{{ queue_name }}"
+    state: present
+    tags: "{{ tags }}"
+
+- name: Create CloudFront Distribution
+  community.aws.cloudfront_distribution:
+    enabled: true
+    default_cache_behavior:
+      target_origin_id: "{{ cf_origin_id }}"
+      viewer_protocol_policy: redirect-to-https
+      min_ttl: 0
+      default_ttl: 3600
+      max_ttl: 86400
+    origins:
+      - id: "{{ cf_origin_id }}"
+        domain_name: "placeholder-lb.us-east-1.elb.amazonaws.com"
+        custom_origin_config:
+          http_port: 80
+          https_port: 443
+          origin_protocol_policy: http-only
+    tags: "{{ tags }}"

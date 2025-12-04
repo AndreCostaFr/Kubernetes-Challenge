@@ -1,0 +1,28 @@
+project_name: "cloudops-challenge"
+region: "us-east-1"
+
+tags:
+  Environment: "Test"
+  Project: "challenge"
+  ManagedBy: "Ansible"
+
+ecr_repo_name: "{{ project_name }}-repo"
+
+eks_cluster_name: "{{ project_name }}-cluster"
+eks_version: "1.30"
+eks_node_count: 2
+
+
+db_identifier: "{{ project_name }}-db"
+db_name: "appdb"
+db_user: "dbadmin"
+db_instance_class: "db.t3.micro"
+db_storage: 20
+
+cache_id: "{{ project_name }}-cache"
+cache_node_type: "cache.t3.micro"
+cache_engine_version: "7.0"
+
+queue_name: "{{ project_name }}-queue"
+
+cf_origin_id: "MainAppOrigin"
