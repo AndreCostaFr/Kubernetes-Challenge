@@ -79,7 +79,7 @@ Still in the Ubuntu terminal, install the command-line tool:
     ```
 2.  Install Ansible for the current user:
     ```bash
-    pip install --user ansible
+    python3 -m pip install ansible-core==2.19.4 --user --break-system-packages
     ```
 3.  Add the local bin path to your terminal (so the command can be found):
     ```bash
