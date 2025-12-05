@@ -149,34 +149,6 @@ curl localhost:8080
 
 This document details the standard operating procedures for validating the Ansible automation scripts designed to provision the infrastructure illustrated below.
 
-```mermaid
-graph LR
-    subgraph "Automação Ansible"
-        Playbook[Playbook: aws_infra]
-    end
-
-    subgraph "AWS Cloud (us-east-1)"
-        direction TB
-        
-        %% Compute & Container
-        Playbook -- "Cria" --> EKS[EKS Cluster: cloudops-challenge-cluster]
-        Playbook -- "Cria" --> ECR[ECR Repo: cloudops-challenge-repo]
-        
-        %% Database & Cache
-        Playbook -- "Cria" --> RDS[RDS Postgres: cloudops-challenge-db]
-        Playbook -- "Cria" --> ElastiCache[Redis: cloudops-challenge-cache]
-        
-        %% Messaging & CDN
-        Playbook -- "Cria" --> SQS[SQS Queue: cloudops-challenge-queue]
-        Playbook -- "Cria" --> CloudFront[CloudFront Distro]
-        
-        %% Relações Implícitas (Lógicas)
-        CloudFront -.->|"Origem (HTTP)"| LB[Load Balancer (Placeholder)]
-    end
-    
-    style Playbook fill:#ee5,stroke:#333,stroke-width:2px
-```
-
 > [!NOTE]
 > Due to the current absence of a live AWS environment, validation is restricted to **static analysis** and **syntax checking**. This ensures codebase integrity and proper formatting without provisioning or modifying actual cloud resources.
 
