@@ -31,6 +31,29 @@ git clone https://github.com/AndreCostaFr/Kubernetes-Challenge
 cd Kubernetes-Challenge
 ```
 
+---
+
+### 🔒 Security & Secrets Configuration
+
+**Important:** The configuration file `kubernetes/01-secrets.yaml` is intentionally **excluded from the repository** (via `.gitignore`). This follows production security best practices to prevent sensitive credentials from being committed to version control.
+
+To run the application locally, you must create this file manually immediately after cloning the repository:
+
+1.  Create a new file located at: `kubernetes/01-secrets.yaml`
+2.  Paste the following content into it:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: "bigHardPassword"
+  REDIS_PASSWORD: "anotherBigHardPassword"
+```
+
+---
 ### Start Minikube
 Initialize your local Kubernetes cluster:
 
