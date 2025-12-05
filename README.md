@@ -154,6 +154,15 @@ This document details the standard operating procedures for validating the Ansib
 
 ---
 
+### 📋 System Requirements
+
+Ensure your environment meets the following version standards before proceeding:
+
+* **Ansible**: Version **2.17+** is required.
+    > *Note: This project was developed and validated using **Ansible Core 2.19.4**.*
+
+---
+
 ## 🛠️ 1. Dependency Management
 
 Before executing any playbooks, it is mandatory to ensure that all external roles and collections required by the project are installed in your local environment.
