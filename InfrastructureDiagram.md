@@ -4,17 +4,17 @@ The following diagram illustrates the interaction between the Kubernetes compone
 ---
 ```mermaid
 graph TD
-    user((Utilizador))
+    user((User))
     
-    subgraph "AWS Cloud (Provisionado via Ansible)"
+    subgraph "AWS Cloud (Provisioned via Ansible)"
         CF[CloudFront CDN]
-        ECR["Amazon ECR<br/>(Imagens Docker)"]
-        SQS["Amazon SQS<br/>(Filas)"]
+        ECR["Amazon ECR<br/>(Docker Images)"]
+        SQS["Amazon SQS<br/>(Queues)"]
         
         subgraph VPC
             EKS_Control[Amazon EKS Cluster]
             
-            subgraph "Data Layer (Geridos)"
+            subgraph "Data Layer (Managed)"
                 RDS["Amazon RDS<br/>(PostgreSQL)"]
                 Redis["ElastiCache<br/>(Redis)"]
             end
@@ -30,21 +30,21 @@ graph TD
         end
     end
 
-    %% Fluxo de Tráfego
+    %% Traffic Flow
     user -->|HTTPS| CF
     CF -->|HTTP| Ingress
     Ingress -->|Routing| SvcApp
     SvcApp --> PodApp
     
-    %% Dependências da Aplicação
-    PodApp -->|Lê/Escreve| RDS
+    %% Application Dependencies
+    PodApp -->|Read/Write| RDS
     PodApp -->|Cache| Redis
-    PodApp -.->|Mensagens| SQS
+    PodApp -.->|Messages| SQS
     
     %% Deploy
     EKS_Control -.->|Pull Images| ECR
     
-    %% Estilos
+    %% Styles
     style CF fill:#f9f,stroke:#333,stroke-width:2px
     style RDS fill:#316192,stroke:#fff,color:#fff
     style Redis fill:#DD0031,stroke:#fff,color:#fff
