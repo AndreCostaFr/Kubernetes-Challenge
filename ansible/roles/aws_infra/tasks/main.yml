@@ -15,7 +15,7 @@
     name: "{{ eks_cluster_name }}"
     version: "{{ eks_version }}"
     region: "{{ region }}"
-    role_arn: "arn:aws:iam::123456789012:role/EKS-Role-Placeholder"
+    role_arn: "arn:aws:iam::123456789012:role/EKS-Role-Placeholder" #the identifications for role_arn and subnets, ina production env would be obtained by data sources or given as variables
     resources_vpc_config:
       subnetIds:
         - "subnet-0a1b2c3d"
