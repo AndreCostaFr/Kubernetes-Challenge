@@ -4,19 +4,19 @@ The following diagram illustrates the interaction between the Kubernetes compone
 ---
 ```mermaid
 graph TD
-  user((Utilizador))
+    user((Utilizador))
     
     subgraph "AWS Cloud (Provisionado via Ansible)"
         CF[CloudFront CDN]
-        ECR[Amazon ECR<br/>(Imagens Docker)]
-        SQS[Amazon SQS<br/>(Filas)]
+        ECR["Amazon ECR<br/>(Imagens Docker)"]
+        SQS["Amazon SQS<br/>(Filas)"]
         
         subgraph VPC
             EKS_Control[Amazon EKS Cluster]
             
             subgraph "Data Layer (Geridos)"
-                RDS[Amazon RDS<br/>(PostgreSQL)]
-                Redis[ElastiCache<br/>(Redis)]
+                RDS["Amazon RDS<br/>(PostgreSQL)"]
+                Redis["ElastiCache<br/>(Redis)"]
             end
             
             subgraph "EKS Worker Nodes (Kubernetes)"
